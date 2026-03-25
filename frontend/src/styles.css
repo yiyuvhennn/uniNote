@@ -96,8 +96,12 @@ input:focus {
 }
 
 .navbar-brand {
+  border: 1px solid #000000;
+
   font-size: 28px;
   font-weight: 700;
+
+  text-decoration: none;
 }
 
 .navbar-links {

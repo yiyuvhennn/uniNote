@@ -11,14 +11,12 @@ function handleLogout() {
 
 <template>
   <nav class="navbar">
-    <div class="navbar-brand">uniNote</div>
-
+    <router-link to="/notes" class="navbar-brand">UniNote</router-link>
     <div class="navbar-links">
       <router-link to="/notes" class="link-btn">筆記列表</router-link>
       <router-link to="/favorites" class="link-btn">我的收藏</router-link>
       <router-link to="/create" class="link-btn">新增筆記</router-link>
       <button @click="handleLogout">登出</button>
     </div>
-    
   </nav>
 </template>

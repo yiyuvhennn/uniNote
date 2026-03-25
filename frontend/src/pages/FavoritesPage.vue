@@ -69,6 +69,7 @@ function handleUnfavorited(noteId: number) {
         :key="note.id" 
         :note="note" 
         :initialFavorited="true"
+        :showDeleteButton="false"
         @unfavorited="handleUnfavorited"/>
       </div>
     </div>

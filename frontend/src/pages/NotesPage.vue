@@ -14,7 +14,6 @@ const keyword = ref("");
 const course = ref("");
 const tag = ref("");
 
-
 async function fetchNotes() {
   loading.value = true;
   errorMessage.value = "";
@@ -46,6 +45,10 @@ function handleReset() {
   course.value = "";
   tag.value = "";
   fetchNotes();
+}
+
+function handleDeleted(noteId: number) {
+  notes.value = notes.value.filter((note) => note.id !== noteId);
 }
 
 onMounted(() => {
@@ -101,7 +104,13 @@ onMounted(() => {
       </div>
 
       <div v-else>
-        <NoteCard v-for="note in notes" :key="note.id" :note="note" />
+        <NoteCard
+          v-for="note in notes"
+          :key="note.id"
+          :note="note"
+          :showDeleteButton="true"
+          @deleted="handleDeleted"
+        />
       </div>
     </div>
   </div>

@@ -6,10 +6,12 @@ import api from "../services/api";
 const props = defineProps<{
   note: Note;
   initialFavorited?: boolean;
+  showDeleteButton?: boolean;
 }>();
 
 const emit = defineEmits<{
   (e: "unfavorited", noteId: number): void;
+  (e: "deleted", noteId: number): void;
 }>();
 
 const isFavorited = ref(props.initialFavorited ?? false);
@@ -30,6 +32,20 @@ async function toggleFavorite() {
     console.error("收藏操作失敗", error);
   }
 }
+
+async function handleDelete() {
+  const confirmed = window.confirm("確定要刪除這篇筆記嗎？");
+
+  if (!confirmed) return;
+
+  try {
+    await api.delete(`/notes/${props.note.id}`);
+    emit("deleted", props.note.id);
+  } catch (error) {
+    console.error("刪除筆記失敗", error);
+    alert("刪除失敗");
+  }
+}
 </script>
 
 <template>
@@ -47,9 +63,13 @@ async function toggleFavorite() {
 
     <a :href="props.note.fileUrl" target="_blank">查看檔案</a>
 
-    <div style="margin-top: 12px;">
+    <div class="row" style="margin-top: 12px;">
       <button @click="toggleFavorite">
         {{ isFavorited ? "取消收藏" : "收藏" }}
+      </button>
+
+      <button v-if="props.showDeleteButton" @click="handleDelete">
+        刪除
       </button>
     </div>
   </div>

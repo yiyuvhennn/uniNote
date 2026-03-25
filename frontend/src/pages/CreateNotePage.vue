@@ -16,101 +16,110 @@ const errorMessage = ref("");
 const successMessage = ref("");
 
 onMounted(() => {
-  const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token");
 
-  if (!token) {
-    router.push("/login");
-  }
+    if (!token) {
+        router.push("/login");
+    }
 });
 
 async function handleSubmit() {
-  errorMessage.value = "";
-  successMessage.value = "";
+    errorMessage.value = "";
+    successMessage.value = "";
 
-  if (!title.value.trim()) {
-    errorMessage.value = "請輸入筆記標題";
-    return;
-  }
+    if (!title.value.trim()) {
+        errorMessage.value = "請輸入筆記標題";
+        return;
+    }
 
-  if (!fileUrl.value.trim()) {
-    errorMessage.value = "請輸入檔案連結";
-    return;
-  }
+    if (!fileUrl.value.trim()) {
+        errorMessage.value = "請輸入檔案連結";
+        return;
+    }
 
-  loading.value = true;
+    if (!course.value.trim()) {
+        errorMessage.value = "請輸入課程名稱";
+        return;
+    }
 
-  try {
-    await api.post("/notes", {
-      title: title.value,
-      description: description.value,
-      fileUrl: fileUrl.value,
-      course: course.value,
-    });
+    if (description.value.trim() && description.value.trim().length < 5) {
+        errorMessage.value = "筆記描述至少要 5 個字";
+        return;
+    }
 
-    successMessage.value = "新增成功，即將返回列表";
+    loading.value = true;
 
-    setTimeout(() => {
-      router.push("/notes");
-    }, 800);
-  } catch (error) {
-    console.error(error);
-    errorMessage.value = "新增失敗，請確認資料是否正確";
-  } finally {
-    loading.value = false;
-  }
+    try {
+        await api.post("/notes", {
+            title: title.value.trim(),
+            description: description.value.trim(),
+            fileUrl: fileUrl.value.trim(),
+            course: course.value.trim(),
+        });
+        successMessage.value = "新增成功，即將返回列表";    
+
+        setTimeout(() => {
+            router.push("/notes");
+        }, 800);
+    } catch (error) {
+        console.error(error);
+        errorMessage.value = "新增失敗，請確認資料是否正確";
+    } finally {
+        loading.value = false;
+    }
 }
 </script>
 
 <template>
-  <div>
-    <Navbar />
+    <div>
+        <Navbar />
 
-    <div class="page-container" style="max-width: 640px;">
-      <h1 class="page-title">新增筆記</h1>
+        <div class="page-container" style="max-width: 640px;">
+        <h1 class="page-title">新增筆記</h1>
 
-      <div class="card">
-        <div class="row" style="flex-direction: column;">
-          <input
-            v-model="title"
-            type="text"
-            placeholder="請輸入筆記標題"
-            @keyup.enter="handleSubmit"
-          />
+        <div class="card">
+            <div class="row" style="flex-direction: column;">
+                <input
+                    v-model="title"
+                    type="text"
+                    placeholder="請輸入筆記標題"
+                    @keyup.enter="handleSubmit"
+                />
 
-          <input
-            v-model="description"
-            type="text"
-            placeholder="請輸入筆記描述"
-            @keyup.enter="handleSubmit"
-          />
+                <input
+                    v-model="description"
+                    type="text"
+                    placeholder="請輸入筆記描述"
+                    @keyup.enter="handleSubmit"
+                />
 
-          <input
-            v-model="fileUrl"
-            type="text"
-            placeholder="請輸入檔案連結"
-            @keyup.enter="handleSubmit"
-          />
+                <input
+                    v-model="fileUrl"
+                    type="text"
+                    placeholder="請輸入檔案連結"
+                    @keyup.enter="handleSubmit"
+                />
 
-          <input
-            v-model="course"
-            type="text"
-            placeholder="請輸入課程名稱"
-            @keyup.enter="handleSubmit"
-          />
+                <input
+                    v-model="course"
+                    type="text"
+                    placeholder="請輸入課程名稱"
+                    @keyup.enter="handleSubmit"
+                />
 
-          <button @click="handleSubmit" :disabled="loading">
-            {{ loading ? "送出中..." : "新增筆記" }}
-          </button>
+                <button @click="handleSubmit" :disabled="loading">
+                    {{ loading ? "送出中..." : "新增筆記" }}
+                </button>
+                </div>
+
+                <p v-if="errorMessage" style="margin-top: 16px; color: #c0392b;">
+                    {{ errorMessage }}
+                </p>
+
+                <p v-if="successMessage" style="margin-top: 16px; color: #27ae60;">
+                    {{ successMessage }}
+                </p>
+            </div>
         </div>
-
-        <p v-if="errorMessage" style="margin-top: 16px; color: #c0392b;">
-          {{ errorMessage }}
-        </p>
-
-        <p v-if="successMessage" style="margin-top: 16px; color: #27ae60;">
-          {{ successMessage }}
-        </p>
-      </div>
     </div>
-  </div>
 </template>
